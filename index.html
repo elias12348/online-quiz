@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SINF012 — Exam Preparation Quiz</title>
+<style>
+  :root{
+    --paper:#FAFAF8;
+    --ink:#14171F;
+    --ink-soft:#4B5162;
+    --rule:#DADDE3;
+    --indigo:#3E4FC7;
+    --indigo-deep:#2C3897;
+    --amber:#B4790A;
+    --good:#1B7A4B;
+    --good-bg:#EAF5EE;
+    --bad:#B23A2E;
+    --bad-bg:#FBEAE8;
+    --card:#FFFFFF;
+    --serif: Arial, Helvetica, sans-serif;
+    --sans: Arial, Helvetica, sans-serif;
+    --mono: Arial, Helvetica, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:#D9DEF9;}
+  a{color:var(--indigo-deep);}
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:48px 24px 96px;
+  }
+  .kicker{
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:13px;
+    letter-spacing:0.03em;
+    color:var(--indigo-deep);
+    margin:0 0 6px;
+  }
+  h1{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:clamp(28px,5vw,38px);
+    line-height:1.2;
+    margin:0 0 10px;
+  }
+  h2{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:24px;
+    margin:0 0 14px;
+  }
+  h3{
+    font-family:var(--serif);
+    font-weight:700;
+    font-size:18px;
+    margin:0 0 4px;
+  }
+  p{margin:0 0 16px; color:var(--ink-soft);}
+  .lede{font-size:17px; color:var(--ink-soft); max-width:58ch;}
+  .rule{border:none; border-top:1px solid var(--rule); margin:32px 0;}
+  .btn{
+    appearance:none;
+    border:1px solid var(--ink);
+    background:var(--ink);
+    color:#fff;
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:15px;
+    padding:12px 22px;
+    border-radius:3px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .btn:hover{background:var(--indigo-deep); border-color:var(--indigo-deep);}
+  .btn:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, button:focus-visible{
+    outline:3px solid var(--indigo); outline-offset:2px;
+  }
+  .btn.secondary{
+    background:transparent; color:var(--ink); border-color:var(--rule);
+  }
+  .btn.secondary:hover{border-color:var(--ink);}
+  .btn[disabled]{opacity:0.45; cursor:not-allowed;}
+  .btn-row{display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;}
+
+  /* landing choice */
+  .choices{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1px;
+    background:var(--rule);
+    border:1px solid var(--rule);
+    margin-top:28px;
+  }
+  @media (max-width:600px){ .choices{grid-template-columns:1fr;} }
+  .choice{
+    background:var(--card);
+    padding:28px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .choice .role{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--indigo-deep);
+  }
+  .choice p{font-size:14.5px; margin-bottom:6px;}
+
+  /* meta strip */
+  .meta{
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+    margin:24px 0 4px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .meta b{color:var(--ink); font-weight:600;}
+
+  /* section list on instructions */
+  .breakdown{width:100%; border-collapse:collapse; margin:18px 0 6px;}
+  .breakdown th,.breakdown td{
+    text-align:left; padding:9px 4px; border-bottom:1px solid var(--rule);
+    font-size:14.5px;
+  }
+  .breakdown th{font-family:var(--mono); font-weight:600; font-size:12px; color:var(--ink-soft);}
+  .breakdown td.num, .breakdown th.num{text-align:right; font-family:var(--mono);}
+
+  /* pin */
+  .pin-box{max-width:280px;}
+  input[type=password], input[type=text]{
+    width:100%;
+    font-family:var(--mono);
+    font-size:18px;
+    letter-spacing:0.15em;
+    padding:12px 14px;
+    border:1px solid var(--rule);
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .error-text{color:var(--bad); font-size:14px; margin-top:8px; min-height:18px;}
+
+  /* quiz shell */
+  .timer-bar{
+    position:sticky; top:0; z-index:5;
+    background:var(--paper);
+    border-bottom:1px solid var(--rule);
+    padding:12px 0;
+    margin-bottom:8px;
+  }
+  .timer-inner{
+    max-width:760px; margin:0 auto; padding:0 24px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .timer-label{font-family:var(--mono); font-size:12px; color:var(--ink-soft);}
+  .timer-clock{
+    font-family:var(--mono); font-size:20px; font-weight:600; color:var(--ink);
+  }
+  .timer-clock.low{color:var(--bad);}
+
+  .section-head{
+    margin-top:40px; padding-top:8px;
+  }
+  .section-head .kicker{margin-bottom:2px;}
+  .section-head p{margin-bottom:0; font-size:14.5px;}
+
+  .q{
+    border-top:1px solid var(--rule);
+    padding:20px 0;
+  }
+  .q:last-child{border-bottom:1px solid var(--rule);}
+  .q-head{
+    display:flex; justify-content:space-between; gap:16px; align-items:baseline;
+    margin-bottom:10px;
+  }
+  .q-num{font-family:var(--mono); font-size:13px; color:var(--indigo-deep); white-space:nowrap;}
+  .q-marks{font-family:var(--mono); font-size:12px; color:var(--ink-soft); white-space:nowrap;}
+  .q-text{font-size:16px; color:var(--ink); margin:0;}
+
+  .tf-options{display:flex; gap:10px; margin-top:10px;}
+  .tf-btn{
+    flex:1;
+    border:1px solid var(--rule);
+    background:#fff;
+    padding:10px 12px;
+    border-radius:3px;
+    cursor:pointer;
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:14.5px;
+    color:var(--ink-soft);
+    text-align:center;
+  }
+  .tf-btn.selected{
+    border-color:var(--indigo-deep);
+    background:#EEF0FC;
+    color:var(--indigo-deep);
+  }
+
+  .fill-input{
+    margin-top:10px;
+    max-width:340px;
+  }
+  .fill-input input{
+    font-family:var(--sans);
+    font-size:15px;
+    letter-spacing:normal;
+    padding:9px 12px;
+  }
+
+  .match-row{
+    display:grid;
+    grid-template-columns:minmax(140px,220px) 1fr;
+    gap:14px;
+    align-items:center;
+    padding:9px 0;
+  }
+  .match-row .left-term{
+    font-weight:600; font-size:14.5px;
+  }
+  select{
+    width:100%;
+    font-family:var(--sans);
+    font-size:14.5px;
+    padding:9px 10px;
+    border:1px solid var(--rule);
+    border-radius:3px;
+    background:#fff;
+    color:var(--ink);
+  }
+
+  .submit-block{
+    margin-top:44px;
+    padding-top:24px;
+    border-top:2px solid var(--ink);
+  }
+  .progress-note{font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-bottom:14px;}
+
+  /* results */
+  .score-panel{
+    display:flex; align-items:flex-end; gap:24px; flex-wrap:wrap;
+    padding:24px 0 8px;
+  }
+  .score-big{
+    font-family:var(--serif); font-weight:700; font-size:58px; line-height:1;
+  }
+  .score-of{font-family:var(--mono); font-size:16px; color:var(--ink-soft);}
+  .grade-pill{
+    font-family:var(--mono); font-weight:600; font-size:13px;
+    padding:5px 12px; border-radius:20px;
+    background:var(--good-bg); color:var(--good);
+    border:1px solid transparent;
+  }
+  .grade-pill.mid{background:#FDF3E3; color:var(--amber);}
+  .grade-pill.low{background:var(--bad-bg); color:var(--bad);}
+
+  .result-row{
+    border-top:1px solid var(--rule);
+    padding:16px 0;
+    display:grid;
+    grid-template-columns:22px 1fr;
+    gap:10px;
+  }
+  .result-row:last-child{border-bottom:1px solid var(--rule);}
+  .mark-icon{
+    font-family:var(--mono); font-weight:700; font-size:14px; margin-top:2px;
+  }
+  .mark-icon.correct{color:var(--good);}
+  .mark-icon.wrong{color:var(--bad);}
+  .result-q{font-size:15px; margin-bottom:6px;}
+  .result-meta{font-size:13.5px; color:var(--ink-soft);}
+  .result-meta .your{color:var(--bad);}
+  .result-meta .correct-answer{color:var(--good); font-weight:600;}
+
+  .module-summary{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--rule); border:1px solid var(--rule); margin:20px 0 8px;
+  }
+  @media (max-width:600px){.module-summary{grid-template-columns:1fr;}}
+  .module-summary .cell{background:#fff; padding:16px;}
+  .module-summary .cell .lbl{font-family:var(--mono); font-size:11.5px; color:var(--ink-soft);}
+  .module-summary .cell .val{font-family:var(--serif); font-size:22px; font-weight:600; margin-top:4px;}
+
+  /* mentor panel */
+  .mentor-set{margin-top:30px;}
+  .mentor-item{
+    border-top:1px solid var(--rule);
+    padding:12px 0;
+    font-size:14.5px;
+  }
+  .mentor-item:last-child{border-bottom:1px solid var(--rule);}
+  .mentor-item .q-line{margin-bottom:4px;}
+  .mentor-item .a-line{color:var(--good); font-weight:600;}
+  .tag{
+    display:inline-block; font-family:var(--mono); font-size:11px;
+    color:var(--indigo-deep); border:1px solid var(--rule); border-radius:12px;
+    padding:2px 9px; margin-right:8px;
+  }
+
+  .footer-note{
+    margin-top:56px; padding-top:20px; border-top:1px solid var(--rule);
+    font-size:13px; color:var(--ink-soft);
+  }
+  .home-link{
+    font-family:var(--mono); font-size:13px; color:var(--ink-soft); text-decoration:none;
+  }
+  .home-link:hover{color:var(--indigo-deep);}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ============================================================
+   SINF012 — Introduction to Databases and Information Systems
+   Exam preparation quiz
+   Source material balanced across three uploaded modules:
+   OS = Operating Systems, NET = Networks, DB = Databases
+   Every item is worth 2 marks. 50 items = 100 marks total.
+   ============================================================ */
+
+const MENTOR_PIN = "871101";
+const QUIZ_SECONDS = 90 * 60;
+
+const MODULE_LABELS = {
+  OS: "Operating Systems",
+  NET: "Networks & Network Devices",
+  DB: "Databases"
+};
+
+const TF = [
+  {id:"tf1", mod:"OS", text:`System software includes the operating system and utility programs that run a computer.`, answer:true},
+  {id:"tf2", mod:"OS", text:`An operating system is only responsible for starting application software, and does not manage the computer's hardware resources.`, answer:false},
+  {id:"tf3", mod:"OS", text:`Virtual memory allows an operating system to temporarily store data on a storage medium until it can be "swapped" into RAM.`, answer:true},
+  {id:"tf4", mod:"OS", text:`A multitasking operating system allows only one program or app to run at a time.`, answer:false},
+  {id:"tf5", mod:"OS", text:`Closed-source operating systems, such as Windows and macOS, allow anyone to freely modify and redistribute their source code.`, answer:false},
+
+  {id:"tf6", mod:"NET", text:`A local area network (LAN) connects computers and devices within a limited geographic area, such as a single building.`, answer:true},
+  {id:"tf7", mod:"NET", text:`Wireless networks are generally considered more secure than wired networks.`, answer:false},
+  {id:"tf8", mod:"NET", text:`An extranet allows customers or suppliers to access part of an organisation's intranet.`, answer:true},
+  {id:"tf9", mod:"NET", text:`In the TCP/IP protocol family, TCP defines how data is routed through a network, while IP ensures every connected device has a unique address.`, answer:true},
+  {id:"tf10", mod:"NET", text:`In a star network topology, the failure of one non-central connected device stops the entire network from functioning.`, answer:false},
+
+  {id:"tf11", mod:"DB", text:`A primary key is a field that uniquely identifies each record in a table.`, answer:true},
+  {id:"tf12", mod:"DB", text:`A file processing system generally has less data redundancy than a database approach.`, answer:false},
+  {id:"tf13", mod:"DB", text:`Structured Query Language (SQL) is a popular query language used by DBMSs to manage, update, and retrieve data.`, answer:true},
+  {id:"tf14", mod:"DB", text:`In a one-to-many relationship, a record in one table can relate to only one record in another table.`, answer:false},
+  {id:"tf15", mod:"DB", text:`The CIA triad, a classic database security model, stands for Confidentiality, Integrity, and Availability.`, answer:true},
+];
+
+const FILL = [
+  {id:"f1", mod:"OS", text:`A(n) ______ is a set of programs that coordinate all the activities among computer or mobile device hardware.`, accepted:["operating system","os"]},
+  {id:"f2", mod:"OS", text:`The technique of swapping items between memory and storage is called ______.`, accepted:["paging"]},
+  {id:"f3", mod:"OS", text:`Placing data into a buffer while it waits to be sent to an input or output device is called ______.`, accepted:["spooling"]},
+  {id:"f4", mod:"OS", text:`A(n) ______ enables a computer or device to run another operating system in addition to the one already installed.`, accepted:["virtual machine","vm"]},
+  {id:"f5", mod:"OS", text:`A ______ user account is designed for the everyday user working for work or recreation, as opposed to an administrator account.`, accepted:["standard"]},
+
+  {id:"f6", mod:"NET", text:`A(n) ______ is a system of two or more devices linked by wires, cables, or a telecommunications system.`, accepted:["network"]},
+  {id:"f7", mod:"NET", text:`The most common standard for wired networks, which controls how NICs, routers, and modems share access to cables, is ______.`, accepted:["ethernet"]},
+  {id:"f8", mod:"NET", text:`A(n) ______ connects two or more networks and directs the flow of information between them.`, accepted:["router"]},
+  {id:"f9", mod:"NET", text:`A(n) ______ network connects fewer than 10 computers that communicate directly with one another without requiring a central server.`, accepted:["peer-to-peer","peer to peer","p2p"]},
+  {id:"f10", mod:"NET", text:`______ is a network protocol that uses short-range radio waves, at speeds up to 3 Mbps, to let two paired devices exchange data.`, accepted:["bluetooth"]},
+
+  {id:"f11", mod:"DB", text:`A(n) ______ is software that allows a user to create, access, and manage a database.`, accepted:["dbms","database management system"]},
+  {id:"f12", mod:"DB", text:`A(n) ______ extracts data from a database based on specified criteria for one or more fields.`, accepted:["query"]},
+  {id:"f13", mod:"DB", text:`The ______, also called a repository, stores details about each table in a database and each field within those tables.`, accepted:["data dictionary"]},
+  {id:"f14", mod:"DB", text:`When the primary key of a table consists of more than one field, it is called a(n) ______ key.`, accepted:["composite"]},
+  {id:"f15", mod:"DB", text:`Big Data is often described using the three V's: Volume, Variety, and ______.`, accepted:["velocity"]},
+];
+
+const MATCH = {
+  OS: [
+    ["GUI", "A collective term for all the ways a user interacts with a device, such as touching, pointing, and clicking"],
+    ["Icon", "A small picture that represents a program, file, or hardware device"],
+    ["Dialog box", "A box with controls that lets the user tell the operating system how to complete a command"],
+    ["Multitasking OS", "Allows two or more programs or apps to reside in memory at the same time"],
+    ["Disk cleanup", "A utility that searches for and removes or archives unnecessary files"],
+    ["Partition", "A section of a hard drive that functions like a separate drive"],
+    ["Performance monitor", "A program that assesses and reports information about various computer resources and devices"]
+  ],
+  NET: [
+    ["Hub", "Provides a central point for network cables and transfers data to all devices"],
+    ["Switch", "Provides a central point for network cables and transfers data only to the intended recipient"],
+    ["Modem", "Connects a sending or receiving device to a communications channel, such as the Internet"],
+    ["VPN", "Lets an individual securely access an organisation's network using encryption over a public connection"],
+    ["WAN", "A network that connects devices across a large geographic region"],
+    ["NFC", "A protocol based on RFID used for close-range communication, such as mobile phone payments"],
+    ["Firewall", "Creates a blockade between a private network and the Internet"]
+  ],
+  DB: [
+    ["Field", "The smallest unit of data a user accesses, made up of one or more related characters"],
+    ["Record", "A group of related fields, such as all the fields about one student"],
+    ["Table", "The highest level in the data hierarchy, containing related records and fields"],
+    ["Report writer", "Lets a user design a report, retrieve data into it, and then display or print it"],
+    ["Database administrator (DBA)", "The person responsible for managing and coordinating all database activities"],
+    ["Data lake", "A collection of both structured and unstructured data used in business intelligence"]
+  ]
+};
+
+/* ---------- derived totals ---------- */
+const MARKS_PER_ITEM = 2;
+let matchTotalPairs = 0;
+Object.values(MATCH).forEach(arr => matchTotalPairs += arr.length);
+const TOTAL_ITEMS = TF.length + FILL.length + matchTotalPairs;
+const TOTAL_MARKS = TOTAL_ITEMS * MARKS_PER_ITEM;
+
+function moduleCount(list, key){
+  const c = {OS:0,NET:0,DB:0};
+  list.forEach(item => c[item.mod ?? item[key]]++);
+  return c;
+}
+
+/* ---------- state ---------- */
+let state = {
+  screen: "landing",
+  timerId: null,
+  secondsLeft: QUIZ_SECONDS,
+  started: false,
+  tfAnswers: {},
+  fillAnswers: {},
+  matchAnswers: {}, // matchAnswers[mod][leftTerm] = chosenDefinition
+  matchOptions: {}, // shuffled options per module
+  results: null
+};
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function el(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = "";
+  if(state.screen === "landing") app.appendChild(renderLanding());
+  else if(state.screen === "studentInstructions") app.appendChild(renderInstructions());
+  else if(state.screen === "quiz") app.appendChild(renderQuiz());
+  else if(state.screen === "results") app.appendChild(renderResults());
+  else if(state.screen === "mentorPin") app.appendChild(renderMentorPin());
+  else if(state.screen === "mentorPanel") app.appendChild(renderMentorPanel());
+  window.scrollTo({top:0});
+}
+
+/* ---------- LANDING ---------- */
+function renderLanding(){
+  const wrap = el(`<div></div>`);
+  wrap.appendChild(el(`
+    <div>
+      <p class="kicker">SINF012 · Introduction to Databases and Information Systems</p>
+      <h1>Exam Preparation Quiz</h1>
+      <p class="lede">Fifty questions across true/false, fill-in-the-word, and matching-column formats, covering operating systems, networks, and databases in equal measure. Choose how you're joining below.</p>
+    </div>
+  `));
+
+  const choices = el(`<div class="choices"></div>`);
+  const studentCard = el(`
+    <div class="choice">
+      <div class="role">Student</div>
+      <h3>Take the quiz</h3>
+      <p>90 minutes, 100 marks. Your score and the full answer key are shown once you submit.</p>
+      <div class="btn-row"><button class="btn" id="goStudent">Start as student</button></div>
+    </div>
+  `);
+  const mentorCard = el(`
+    <div class="choice">
+      <div class="role">Mentor</div>
+      <h3>Answer key access</h3>
+      <p>PIN-protected view of every question with its correct answer, for marking or review.</p>
+      <div class="btn-row"><button class="btn secondary" id="goMentor">Enter as mentor</button></div>
+    </div>
+  `);
+  choices.appendChild(studentCard);
+  choices.appendChild(mentorCard);
+  wrap.appendChild(choices);
+
+  wrap.appendChild(el(`
+    <div class="footer-note">Built for SINF012 exam preparation. Content is drawn and balanced evenly from the uploaded module material.</div>
+  `));
+
+  wrap.querySelector('#goStudent').onclick = () => { state.screen = "studentInstructions"; render(); };
+  wrap.querySelector('#goMentor').onclick = () => { state.screen = "mentorPin"; render(); };
+  return wrap;
+}
+
+/* ---------- STUDENT INSTRUCTIONS ---------- */
+function renderInstructions(){
+  const tfC = moduleCount(TF);
+  const fillC = moduleCount(FILL);
+  const wrap = el(`
+    <div>
+      <p class="kicker">Student · Before you begin</p>
+      <h1>Quiz instructions</h1>
+      <p class="lede">Read this once — the countdown starts the moment you click "Begin quiz" and cannot be paused.</p>
+      <div class="meta">
+        <span><b>${TOTAL_MARKS}</b> marks total</span>
+        <span><b>90:00</b> minutes</span>
+        <span><b>${TOTAL_ITEMS}</b> questions</span>
+        <span><b>2 marks</b> per question</span>
+      </div>
+      <table class="breakdown">
+        <tr><th>Section</th><th>Format</th><th class="num">Items</th><th class="num">Marks</th></tr>
+        <tr><td>A</td><td>True / False</td><td class="num">${TF.length}</td><td class="num">${TF.length*MARKS_PER_ITEM}</td></tr>
+        <tr><td>B</td><td>Fill in the missing word</td><td class="num">${FILL.length}</td><td class="num">${FILL.length*MARKS_PER_ITEM}</td></tr>
+        <tr><td>C</td><td>Matching columns</td><td class="num">${matchTotalPairs}</td><td class="num">${matchTotalPairs*MARKS_PER_ITEM}</td></tr>
+      </table>
+      <p style="margin-top:18px;">Coverage is split evenly across all three source modules — Operating Systems, Networks, and Databases — so no single topic dominates the paper.</p>
+      <ul style="color:var(--ink-soft); font-size:14.5px; padding-left:20px;">
+        <li>Answers are locked in as you go and can be changed any time before submitting.</li>
+        <li>The quiz auto-submits when the timer reaches zero.</li>
+        <li>Correct answers and your score only appear after you submit — there's no way to see them mid-attempt.</li>
+        <li>Fill-in-the-word answers are marked as correct regardless of capitalisation or minor spacing.</li>
+      </ul>
+      <div class="btn-row" style="margin-top:26px;">
+        <button class="btn" id="beginQuiz">Begin quiz — start the 90-minute timer</button>
+        <button class="btn secondary" id="backHome1">Back</button>
+      </div>
+    </div>
+  `);
+  wrap.querySelector('#beginQuiz').onclick = () => startQuiz();
+  wrap.querySelector('#backHome1').onclick = () => { state.screen = "landing"; render(); };
+  return wrap;
+}
+
+function startQuiz(){
+  state.secondsLeft = QUIZ_SECONDS;
+  state.started = true;
+  state.tfAnswers = {};
+  state.fillAnswers = {};
+  state.matchAnswers = {OS:{},NET:{},DB:{}};
+  state.matchOptions = {
+    OS: shuffle(MATCH.OS.map(p=>p[1])),
+    NET: shuffle(MATCH.NET.map(p=>p[1])),
+    DB: shuffle(MATCH.DB.map(p=>p[1]))
+  };
+  state.screen = "quiz";
+  render();
+  clearInterval(state.timerId);
+  state.timerId = setInterval(tick, 1000);
+}
+
+function tick(){
+  state.secondsLeft--;
+  const clockEl = document.getElementById('clock');
+  if(clockEl){
+    clockEl.textContent = formatTime(state.secondsLeft);
+    if(state.secondsLeft <= 300) clockEl.classList.add('low');
+  }
+  if(state.secondsLeft <= 0){
+    clearInterval(state.timerId);
+    submitQuiz(true);
+  }
+}
+
+function formatTime(s){
+  s = Math.max(0,s);
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+/* ---------- QUIZ ---------- */
+function renderQuiz(){
+  const wrap = el(`<div></div>`);
+
+  const timerBar = el(`
+    <div class="timer-bar">
+      <div class="timer-inner">
+        <span class="timer-label">SINF012 · Exam Preparation Quiz</span>
+        <span class="timer-clock" id="clock">${formatTime(state.secondsLeft)}</span>
+      </div>
+    </div>
+  `);
+  wrap.appendChild(timerBar);
+
+  const intro = el(`
+    <div>
+      <p class="kicker">Answer every question · ${TOTAL_MARKS} marks total</p>
+      <h1>Quiz in progress</h1>
+    </div>
+  `);
+  wrap.appendChild(intro);
+
+  // Section A: True/False
+  wrap.appendChild(el(`
+    <div class="section-head">
+      <p class="kicker">Section A</p>
+      <h2>True or False</h2>
+      <p>Select True or False for each statement. ${TF.length} questions, 2 marks each.</p>
+    </div>
+  `));
+  TF.forEach((q,i) => wrap.appendChild(renderTF(q,i+1)));
+
+  // Section B: Fill in the word
+  wrap.appendChild(el(`
+    <div class="section-head">
+      <p class="kicker">Section B</p>
+      <h2>Fill in the Missing Word</h2>
+      <p>Type the missing word or short term for each blank. ${FILL.length} questions, 2 marks each.</p>
+    </div>
+  `));
+  FILL.forEach((q,i) => wrap.appendChild(renderFill(q,i+1)));
+
+  // Section C: Matching
+  wrap.appendChild(el(`
+    <div class="section-head">
+      <p class="kicker">Section C</p>
+      <h2>Matching Columns</h2>
+      <p>For each term, choose its matching definition from the dropdown. ${matchTotalPairs} pairs, 2 marks each.</p>
+    </div>
+  `));
+  ["OS","NET","DB"].forEach(mod => wrap.appendChild(renderMatchSet(mod)));
+
+  const answeredCount = Object.keys(state.tfAnswers).length + Object.keys(state.fillAnswers).length +
+    Object.values(state.matchAnswers).reduce((sum,o)=>sum+Object.keys(o).length,0);
+
+  const submitBlock = el(`
+    <div class="submit-block">
+      <p class="progress-note">${answeredCount} of ${TOTAL_ITEMS} questions answered</p>
+      <button class="btn" id="submitBtn">Submit quiz</button>
+    </div>
+  `);
+  wrap.appendChild(submitBlock);
+  submitBlock.querySelector('#submitBtn').onclick = () => submitQuiz(false);
+
+  return wrap;
+}
+
+function renderTF(q, num){
+  const row = el(`
+    <div class="q">
+      <div class="q-head">
+        <span class="q-num">A${num}</span>
+        <span class="q-marks">2 marks</span>
+      </div>
+      <p class="q-text">${q.text}</p>
+      <div class="tf-options">
+        <button class="tf-btn" data-val="true">True</button>
+        <button class="tf-btn" data-val="false">False</button>
+      </div>
+    </div>
+  `);
+  const btns = row.querySelectorAll('.tf-btn');
+  const current = state.tfAnswers[q.id];
+  btns.forEach(b=>{
+    if((b.dataset.val === "true") === current) b.classList.add('selected');
+    b.onclick = () => {
+      state.tfAnswers[q.id] = b.dataset.val === "true";
+      btns.forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      updateProgress();
+    };
+  });
+  return row;
+}
+
+function renderFill(q, num){
+  const row = el(`
+    <div class="q">
+      <div class="q-head">
+        <span class="q-num">B${num}</span>
+        <span class="q-marks">2 marks</span>
+      </div>
+      <p class="q-text">${q.text}</p>
+      <div class="fill-input"><input type="text" placeholder="Your answer" autocomplete="off" spellcheck="false"></div>
+    </div>
+  `);
+  const input = row.querySelector('input');
+  input.value = state.fillAnswers[q.id] || "";
+  input.oninput = () => { state.fillAnswers[q.id] = input.value; updateProgress(); };
+  return row;
+}
+
+function renderMatchSet(mod){
+  const wrap = el(`<div class="mentor-set"></div>`);
+  wrap.appendChild(el(`<h3>${MODULE_LABELS[mod]}</h3>`));
+  const pairs = MATCH[mod];
+  pairs.forEach(([term, def]) => {
+    const row = el(`
+      <div class="match-row">
+        <div class="left-term">${term}</div>
+        <select data-term="${term}">
+          <option value="">— choose a definition —</option>
+        </select>
+      </div>
+    `);
+    const select = row.querySelector('select');
+    state.matchOptions[mod].forEach(optText => {
+      const opt = document.createElement('option');
+      opt.value = optText;
+      opt.textContent = optText;
+      if(state.matchAnswers[mod][term] === optText) opt.selected = true;
+      select.appendChild(opt);
+    });
+    select.onchange = () => {
+      state.matchAnswers[mod][term] = select.value;
+      updateProgress();
+    };
+    wrap.appendChild(row);
+  });
+  return wrap;
+}
+
+function updateProgress(){
+  const note = document.querySelector('.progress-note');
+  if(!note) return;
+  const answeredCount = Object.keys(state.tfAnswers).length + Object.keys(state.fillAnswers).length +
+    Object.values(state.matchAnswers).reduce((sum,o)=>sum+Object.values(o).filter(v=>v).length,0);
+  note.textContent = `${answeredCount} of ${TOTAL_ITEMS} questions answered`;
+}
+
+/* ---------- GRADING ---------- */
+function normalise(s){
+  return (s||"").toString().trim().toLowerCase().replace(/\s+/g," ");
+}
+
+function submitQuiz(auto){
+  clearInterval(state.timerId);
+  const results = {tf:[], fill:[], match:[], scoreByModule:{OS:0,NET:0,DB:0}, maxByModule:{OS:0,NET:0,DB:0}, totalScore:0, auto};
+
+  TF.forEach(q=>{
+    const given = state.tfAnswers[q.id];
+    const correct = given === q.answer;
+    results.tf.push({q, given, correct});
+    results.maxByModule[q.mod]+=MARKS_PER_ITEM;
+    if(correct){ results.totalScore+=MARKS_PER_ITEM; results.scoreByModule[q.mod]+=MARKS_PER_ITEM; }
+  });
+
+  FILL.forEach(q=>{
+    const given = state.fillAnswers[q.id] || "";
+    const correct = q.accepted.some(a => normalise(a) === normalise(given));
+    results.fill.push({q, given, correct});
+    results.maxByModule[q.mod]+=MARKS_PER_ITEM;
+    if(correct){ results.totalScore+=MARKS_PER_ITEM; results.scoreByModule[q.mod]+=MARKS_PER_ITEM; }
+  });
+
+  ["OS","NET","DB"].forEach(mod=>{
+    MATCH[mod].forEach(([term,def])=>{
+      const given = state.matchAnswers[mod][term] || "";
+      const correct = given === def;
+      results.match.push({mod, term, def, given, correct});
+      results.maxByModule[mod]+=MARKS_PER_ITEM;
+      if(correct){ results.totalScore+=MARKS_PER_ITEM; results.scoreByModule[mod]+=MARKS_PER_ITEM; }
+    });
+  });
+
+  state.results = results;
+  state.screen = "results";
+  render();
+}
+
+function gradeInfo(pct){
+  if(pct>=90) return {label:"A+ — Distinction", cls:""};
+  if(pct>=80) return {label:"A — Excellent", cls:""};
+  if(pct>=70) return {label:"B — Very good", cls:""};
+  if(pct>=60) return {label:"C — Good", cls:"mid"};
+  if(pct>=50) return {label:"D — Satisfactory", cls:"mid"};
+  if(pct>=40) return {label:"E — Pass", cls:"mid"};
+  return {label:"F — Fail, revise and retry", cls:"low"};
+}
+
+/* ---------- RESULTS ---------- */
+function renderResults(){
+  const r = state.results;
+  const pct = Math.round((r.totalScore/TOTAL_MARKS)*100);
+  const grade = gradeInfo(pct);
+
+  const wrap = el(`
+    <div>
+      <p class="kicker">${r.auto ? "Time's up — quiz auto-submitted" : "Submitted"}</p>
+      <h1>Your results</h1>
+      <div class="score-panel">
+        <div class="score-big">${r.totalScore}</div>
+        <div class="score-of">/ ${TOTAL_MARKS} marks · ${pct}%</div>
+        <span class="grade-pill ${grade.cls}">${grade.label}</span>
+      </div>
+    </div>
+  `);
+
+  const modSummary = el(`<div class="module-summary"></div>`);
+  ["OS","NET","DB"].forEach(mod=>{
+    modSummary.appendChild(el(`
+      <div class="cell">
+        <div class="lbl">${MODULE_LABELS[mod]}</div>
+        <div class="val">${r.scoreByModule[mod]} / ${r.maxByModule[mod]}</div>
+      </div>
+    `));
+  });
+  wrap.appendChild(modSummary);
+
+  wrap.appendChild(el(`<hr class="rule">`));
+  wrap.appendChild(el(`<h2>Section A — True or False</h2>`));
+  r.tf.forEach((item,i)=> wrap.appendChild(renderResultRow(
+    `A${i+1}. ${item.q.text}`,
+    item.given === undefined ? "No answer given" : (item.given ? "True" : "False"),
+    item.q.answer ? "True" : "False",
+    item.correct
+  )));
+
+  wrap.appendChild(el(`<h2 style="margin-top:36px;">Section B — Fill in the Missing Word</h2>`));
+  r.fill.forEach((item,i)=> wrap.appendChild(renderResultRow(
+    `B${i+1}. ${item.q.text}`,
+    item.given ? item.given : "No answer given",
+    item.q.accepted[0],
+    item.correct
+  )));
+
+  wrap.appendChild(el(`<h2 style="margin-top:36px;">Section C — Matching Columns</h2>`));
+  let matchCounter = 0;
+  ["OS","NET","DB"].forEach(mod=>{
+    wrap.appendChild(el(`<h3 style="margin-top:20px;">${MODULE_LABELS[mod]}</h3>`));
+    r.match.filter(m=>m.mod===mod).forEach(item=>{
+      matchCounter++;
+      wrap.appendChild(renderResultRow(
+        `C${matchCounter}. ${item.term}`,
+        item.given ? item.given : "No answer given",
+        item.def,
+        item.correct
+      ));
+    });
+  });
+
+  const actions = el(`
+    <div class="submit-block" style="border-top:1px solid var(--rule);">
+      <div class="btn-row">
+        <button class="btn" id="retake">Retake the quiz</button>
+        <button class="btn secondary" id="home2">Back to home</button>
+      </div>
+    </div>
+  `);
+  wrap.appendChild(actions);
+  actions.querySelector('#retake').onclick = () => { state.screen = "studentInstructions"; render(); };
+  actions.querySelector('#home2').onclick = () => { state.screen = "landing"; render(); };
+
+  return wrap;
+}
+
+function renderResultRow(questionText, yourAnswer, correctAnswer, correct){
+  return el(`
+    <div class="result-row">
+      <div class="mark-icon ${correct ? 'correct' : 'wrong'}">${correct ? '✓' : '✕'}</div>
+      <div>
+        <p class="result-q">${questionText}</p>
+        <p class="result-meta">
+          Your answer: <span class="${correct ? '' : 'your'}">${escapeHtml(yourAnswer)}</span>
+          ${correct ? '' : ` · Correct answer: <span class="correct-answer">${escapeHtml(correctAnswer)}</span>`}
+        </p>
+      </div>
+    </div>
+  `);
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+/* ---------- MENTOR ---------- */
+function renderMentorPin(){
+  const wrap = el(`
+    <div>
+      <p class="kicker">Mentor access</p>
+      <h1>Enter the mentor PIN</h1>
+      <p class="lede">The mentor view shows the full question bank and answer key for marking and review.</p>
+      <div class="pin-box">
+        <input type="password" id="pinInput" inputmode="numeric" maxlength="6" placeholder="••••••">
+        <p class="error-text" id="pinError"></p>
+        <div class="btn-row">
+          <button class="btn" id="pinSubmit">Unlock</button>
+          <button class="btn secondary" id="backHome3">Back</button>
+        </div>
+      </div>
+    </div>
+  `);
+  const input = wrap.querySelector('#pinInput');
+  const tryUnlock = () => {
+    if(input.value === MENTOR_PIN){
+      state.screen = "mentorPanel";
+      render();
+    } else {
+      wrap.querySelector('#pinError').textContent = "Incorrect PIN. Try again.";
+    }
+  };
+  wrap.querySelector('#pinSubmit').onclick = tryUnlock;
+  input.addEventListener('keydown', e => { if(e.key === 'Enter') tryUnlock(); });
+  wrap.querySelector('#backHome3').onclick = () => { state.screen = "landing"; render(); };
+  return wrap;
+}
+
+function renderMentorPanel(){
+  const wrap = el(`
+    <div>
+      <p class="kicker">Mentor · Answer key</p>
+      <h1>Full question bank</h1>
+      <div class="meta">
+        <span><b>${TOTAL_MARKS}</b> marks total</span>
+        <span><b>${TOTAL_ITEMS}</b> questions</span>
+        <span><b>2 marks</b> per question</span>
+      </div>
+    </div>
+  `);
+
+  wrap.appendChild(el(`<h2 style="margin-top:32px;">Section A — True or False</h2>`));
+  TF.forEach((q,i)=>{
+    wrap.appendChild(el(`
+      <div class="mentor-item">
+        <p class="q-line"><span class="tag">${MODULE_LABELS[q.mod]}</span>A${i+1}. ${q.text}</p>
+        <p class="a-line">${q.answer ? "True" : "False"}</p>
+      </div>
+    `));
+  });
+
+  wrap.appendChild(el(`<h2 style="margin-top:32px;">Section B — Fill in the Missing Word</h2>`));
+  FILL.forEach((q,i)=>{
+    wrap.appendChild(el(`
+      <div class="mentor-item">
+        <p class="q-line"><span class="tag">${MODULE_LABELS[q.mod]}</span>B${i+1}. ${q.text}</p>
+        <p class="a-line">${q.accepted[0]}${q.accepted.length>1 ? ` (also accept: ${q.accepted.slice(1).join(", ")})` : ""}</p>
+      </div>
+    `));
+  });
+
+  wrap.appendChild(el(`<h2 style="margin-top:32px;">Section C — Matching Columns</h2>`));
+  let mc = 0;
+  ["OS","NET","DB"].forEach(mod=>{
+    wrap.appendChild(el(`<h3 style="margin-top:18px;">${MODULE_LABELS[mod]}</h3>`));
+    MATCH[mod].forEach(([term,def])=>{
+      mc++;
+      wrap.appendChild(el(`
+        <div class="mentor-item">
+          <p class="q-line">C${mc}. ${term}</p>
+          <p class="a-line">${def}</p>
+        </div>
+      `));
+    });
+  });
+
+  const back = el(`<div class="submit-block" style="border-top:1px solid var(--rule);"><a href="#" class="home-link" id="mentorHome">← Back to home</a></div>`);
+  wrap.appendChild(back);
+  back.querySelector('#mentorHome').onclick = (e) => { e.preventDefault(); state.screen = "landing"; render(); };
+
+  return wrap;
+}
+
+render();
+</script>
+</body>
+</html>
